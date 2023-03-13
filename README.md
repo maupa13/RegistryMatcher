@@ -24,4 +24,4 @@ Check companies in public registry - https://zakupki.gov.ru/ and http://fas.gov.
 
 **Пример .xsl файла**
 
-https://github.com/github/maupa13/ZakupkiOrganizaciiCemMatcher/blob/excel-example.png
+https://github.com/maupa13/ZakupkiOrganizaciiCemMatcher/blob/main/EXCEL-EXAMPLE.PNG
