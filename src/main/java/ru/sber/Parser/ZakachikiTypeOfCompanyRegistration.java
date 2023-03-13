@@ -1,6 +1,5 @@
 package ru.sber.Parser;
 
-import com.poiji.bind.Poiji;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -9,10 +8,13 @@ import ru.sber.DTO.Company;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.poiji.bind.Poiji.fromExcel;
 
 public class ZakachikiTypeOfCompanyRegistration {
 
@@ -20,11 +22,13 @@ public class ZakachikiTypeOfCompanyRegistration {
 
     public static ArrayList findMatchesType(String input) {
 
+        System.out.println("Started check - Zakazchiki: Type of company 75%");
+
+        boolean success = false;
+
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36";
 
-        List<Company> companies = Poiji.fromExcel(new File(input), Company.class);
-
-        System.out.println("Starting Zakazchiki");
+        List<Company> companies = fromExcel(new File(input), Company.class);
 
         SetIp setIp = new SetIp();
 
@@ -40,49 +44,64 @@ public class ZakachikiTypeOfCompanyRegistration {
                     "NAME&customer223Status_0=on&customer223Status=0&organizationRoleValueIdNameHidden=%7B%7D";
 
             Document zakazchiki = null;
-            try {
-                zakazchiki = Jsoup.connect(urlZakachicki)
-                        .userAgent(userAgent)
-                        .timeout(0)
-                        .get();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            int i = 0;
+
+            while (i < 3) {
+                try {
+                    zakazchiki = Jsoup.connect(urlZakachicki)
+                            .userAgent(userAgent)
+                            .timeout(0)
+                            .ignoreHttpErrors(true)
+                            .get();
+
+                    success = true;
+                    break;
+                } catch (SocketTimeoutException ex) {
+                    System.out.println("jsoup Timeout occurred " + i + " time(s)");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                i++;
             }
 
-            assert zakazchiki != null;
+            if (success) {
 
-            Elements zakazchikiStatus = zakazchiki.getElementsByClass("d-flex lots-wrap-content__body__val");
-            StringBuilder statusStringBuildZakachiki = new StringBuilder();
+                assert zakazchiki != null;
 
-            Matcher matcherClassesZakachiki = Pattern.compile("d-flex lots-wrap-content__body__val").matcher(zakazchikiStatus.toString());
+                Elements zakazchikiStatus = zakazchiki.getElementsByClass("d-flex lots-wrap-content__body__val");
+                StringBuilder statusStringBuildZakachiki = new StringBuilder();
 
-            int countOfReferenceZakazchiki = 0;
-            while (matcherClassesZakachiki.find()) {
-                statusStringBuildZakachiki.append(matcherClassesZakachiki.group());
-                statusStringBuildZakachiki.append("d-flex lots-wrap-content__body__val");
-                countOfReferenceZakazchiki++;
-            }
+                Matcher matcherClassesZakachiki = Pattern.compile("d-flex lots-wrap-content__body__val").matcher(zakazchikiStatus.toString());
 
-            String zakazchikiStatusWrite = zakazchikiStatus.toString()
-                    .replace("<", "")
-                    .replace(">", "")
-                    .replace("/", "")
-                    .replace("\"", "")
-                    .replace("</div>", "")
-                    .replace("div class=d-flex lots-wrap-content__body__val\n" +
-                            " Заказчик\n" + "div\n" + "div class=d-flex lots-wrap-content__body__val", "")
-                    .replace("class=d-flexlots-wrap-content__body__val", "")
-                    .replace("div", "");
+                int countOfReferenceZakazchiki = 0;
+                while (matcherClassesZakachiki.find()) {
+                    statusStringBuildZakachiki.append(matcherClassesZakachiki.group());
+                    statusStringBuildZakachiki.append("d-flex lots-wrap-content__body__val");
+                    countOfReferenceZakazchiki++;
+                }
 
-            String notRegisteredType = "Отсутствуют сведения о типе ЮЛ";
-            String massRegisteredType = "Множество записей о типе ЮЛ: записи о дочерних организациях";
+                String zakazchikiStatusWrite = zakazchikiStatus.toString()
+                        .replace("<", "")
+                        .replace(">", "")
+                        .replace("/", "")
+                        .replace("\"", "")
+                        .replace("</div>", "")
+                        .replace("div class=d-flex lots-wrap-content__body__val\n" +
+                                " Заказчик\n" + "div\n" + "div class=d-flex lots-wrap-content__body__val", "")
+                        .replace("class=d-flexlots-wrap-content__body__val", "")
+                        .replace("div", "");
 
-            if (countOfReferenceZakazchiki == 1) {
-                resultZakazchikiType.add(zakazchikiStatusWrite);
-            } else if (countOfReferenceZakazchiki > 1) {
-                resultZakazchikiType.add(massRegisteredType);
-            } else {
-                resultZakazchikiType.add(notRegisteredType);
+                String notRegisteredType = "Отсутствуют сведения о типе ЮЛ";
+                String massRegisteredType = "Множество записей о типе ЮЛ: записи о дочерних организациях";
+
+                if (countOfReferenceZakazchiki == 1) {
+                    resultZakazchikiType.add(zakazchikiStatusWrite);
+                } else if (countOfReferenceZakazchiki > 1) {
+                    resultZakazchikiType.add(massRegisteredType);
+                } else {
+                    resultZakazchikiType.add(notRegisteredType);
+                }
             }
         }
         return resultZakazchikiType;

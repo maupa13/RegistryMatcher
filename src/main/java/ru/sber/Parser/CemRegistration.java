@@ -1,17 +1,9 @@
 package ru.sber.Parser;
 
-import com.poiji.bind.Poiji;
 import org.apache.commons.io.FileUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
-import org.w3c.dom.NodeList;
 import ru.sber.DTO.Company;
 
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.IOException;
@@ -21,18 +13,24 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.poiji.bind.Poiji.*;
+
 public class CemRegistration {
 
     public static ArrayList resultCem = new ArrayList();
 
     public static ArrayList matcherCemRegistration(String input) {
 
+        System.out.println("Started check - CEM 15%");
+
         XPath xPath =  XPathFactory.newInstance().newXPath();
 
         String cemResultTable = null;
 
+        File file = new File("C:\\Temp\\cemTemp.xml");
+
         try {
-            cemResultTable = FileUtils.readFileToString(new File("C:\\Temp\\cemTemp.html"), StandardCharsets.UTF_8);
+            cemResultTable = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -40,7 +38,8 @@ public class CemRegistration {
         var statusStringBuildVyruchka = new StringBuilder();
 
         if (cemResultTable != null) {
-            List<Company> companies = Poiji.fromExcel(new File(input), Company.class);
+
+            List<Company> companies = fromExcel(new File(input), Company.class);
 
             for (Company element : companies) {
 

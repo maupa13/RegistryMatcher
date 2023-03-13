@@ -109,7 +109,7 @@ public class WriteOutputExcelFile {
         try {
             fileOut = new FileOutputStream(output);
 
-            System.out.println("File written: " + output);
+            System.out.println("Done! 100% - output file: " + output);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

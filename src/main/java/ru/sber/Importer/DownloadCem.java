@@ -5,12 +5,6 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import org.apache.poi.xssf.streaming.SXSSFRow;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.parser.Parser;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -20,7 +14,7 @@ import java.util.Collections;
 public class DownloadCem {
     public static void downloadCemTable() {
 
-        String outputPath = "C:\\Temp\\cemTemp.html";
+        String outputPath = "C:\\Temp\\cemTemp.xml";
 
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
         java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
@@ -49,8 +43,6 @@ public class DownloadCem {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("Starting CEM");
 
 //        while (!page.asText().contains("<th>Номер приказа о включении</th>")) {
 //            webClient.waitForBackgroundJavaScript(500);
