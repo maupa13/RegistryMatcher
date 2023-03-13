@@ -1,6 +1,5 @@
 package ru.sber.Parser;
 
-import com.poiji.bind.Poiji;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -9,10 +8,13 @@ import ru.sber.DTO.Company;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.poiji.bind.Poiji.fromExcel;
 
 public class OrganizaciiRegistration {
 
@@ -20,13 +22,17 @@ public class OrganizaciiRegistration {
 
     public static ArrayList findMatches(String input) {
 
+        System.out.println("Started check - Organizacii 90%");
+
+        boolean success = false;
+
+        int i = 0;
+
         SetIp setIp = new SetIp();
 
-        List<Company> companies = Poiji.fromExcel(new File(input), Company.class);
+        List<Company> companies = fromExcel(new File(input), Company.class);
 
         String userAgent = "Mozilla/5.1 (X11; U; Linux i586; en-US; rv:1.7.7) Gecko/20040924 Epiphany/1.4.4 (Ubuntu)";
-
-        System.out.println("Starting Organizacii");
 
         for (Company element : companies) {
 
@@ -41,71 +47,83 @@ public class OrganizaciiRegistration {
 
             Document organizacii = null;
 
-            try {
-                organizacii = Jsoup.connect(urlOrganizacii)
-                        .userAgent(userAgent)
-                        .timeout(0)
-                        .get();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            while (i < 3) {
+                try {
+                    organizacii = Jsoup.connect(urlOrganizacii)
+                            .userAgent(userAgent)
+                            .timeout(0)
+                            .ignoreHttpErrors(true)
+                            .get();
 
-            assert organizacii != null;
-
-            Elements organizaciiStatus = organizacii.getElementsByClass("registry-entry__header-top__title");
-            StringBuilder statusStringBuild = new StringBuilder();
-            Matcher matcherClasses = Pattern.compile("registry-entry__header-top__title").matcher(organizaciiStatus.toString());
-
-            int countOfReference = 0;
-            while (matcherClasses.find()) {
-                statusStringBuild.append(matcherClasses.group());
-                statusStringBuild.append("registry-entry__header-top__title");
-                countOfReference++;
-            }
-
-            //do correct booleans with organizations, which blocked with 44-fz, but not with 223-fz
-            boolean all = organizaciiStatus.toString().contains("44-ФЗ") && organizaciiStatus.toString().contains("223-ФЗ");
-            boolean only44 = organizaciiStatus.toString().contains("44-ФЗ") && !(organizaciiStatus.toString().contains("223-ФЗ"));
-            boolean only223 = !(organizaciiStatus.toString().contains("44-ФЗ")) && organizaciiStatus.toString().contains("223-ФЗ");
-            boolean blocked44 = organizaciiStatus.toString().contains("44-ФЗ Заблокирована");
-            boolean blocked223 = organizaciiStatus.toString().contains("223-ФЗ Заблокирована");
-
-            String blocked223Info = "Запись о блокировке: 223-ФЗ. Рекомендуется проверить организацию вручную";
-            String blocked44Info = "Запись о блокировке: 44-ФЗ. Рекомендуется проверить организацию вручную";
-            String registered44And223Info = "Зарегистрирован: 223-ФЗ и 44-ФЗ. Записи о дочерних организациях отсутствуют";
-            String registered223Info = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях отсутствуют";
-            String registered44Info = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях отсутствуют";
-            String registered44And223MotherInfo = "Материнская компания зарегистрирована: 223-ФЗ и 44-ФЗ";
-            String registered223MotherInfo = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях в аналогичном реестре";
-            String registered44MotherInfo = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях в аналогичном реестре";
-            String notRegisteredOrganizaciiInfo = "Не зарегистрирован в реестре организаций";
-
-            if (blocked223) {
-                resultOrganizacii.add(blocked223Info);
-            }
-
-            if (blocked44) {
-                resultOrganizacii.add(blocked44Info);
-            }
-
-            if (countOfReference == 1) {
-                if (all) {
-                    resultOrganizacii.add(registered44And223Info);
-                } else if (only223) {
-                    resultOrganizacii.add(registered223Info);
-                } else if (only44) {
-                    resultOrganizacii.add(registered44Info);
+                    success = true;
+                    break;
+                } catch (SocketTimeoutException ex) {
+                    System.out.println("jsoup Timeout occurred " + i + " time(s)");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } else if (countOfReference > 0) {
-                if (all) {
-                    resultOrganizacii.add(registered44And223MotherInfo);
-                } else if (only223) {
-                    resultOrganizacii.add(registered223MotherInfo);
-                } else if (only44) {
-                    resultOrganizacii.add(registered44MotherInfo);
+                i++;
+            }
+
+            if (success) {
+
+                assert organizacii != null;
+
+                Elements organizaciiStatus = organizacii.getElementsByClass("registry-entry__header-top__title");
+                StringBuilder statusStringBuild = new StringBuilder();
+                Matcher matcherClasses = Pattern.compile("registry-entry__header-top__title").matcher(organizaciiStatus.toString());
+
+                int countOfReference = 0;
+                while (matcherClasses.find()) {
+                    statusStringBuild.append(matcherClasses.group());
+                    statusStringBuild.append("registry-entry__header-top__title");
+                    countOfReference++;
                 }
-            } else {
-                resultOrganizacii.add(notRegisteredOrganizaciiInfo);
+
+                //do correct booleans with organizations, which blocked with 44-fz, but not with 223-fz
+                boolean all = organizaciiStatus.toString().contains("44-ФЗ") && organizaciiStatus.toString().contains("223-ФЗ");
+                boolean only44 = organizaciiStatus.toString().contains("44-ФЗ") && !(organizaciiStatus.toString().contains("223-ФЗ"));
+                boolean only223 = !(organizaciiStatus.toString().contains("44-ФЗ")) && organizaciiStatus.toString().contains("223-ФЗ");
+                boolean blocked44 = organizaciiStatus.toString().contains("44-ФЗ Заблокирована");
+                boolean blocked223 = organizaciiStatus.toString().contains("223-ФЗ Заблокирована");
+
+                String blocked223Info = "Запись о блокировке: 223-ФЗ. Рекомендуется проверить организацию вручную";
+                String blocked44Info = "Запись о блокировке: 44-ФЗ. Рекомендуется проверить организацию вручную";
+                String registered44And223Info = "Зарегистрирован: 223-ФЗ и 44-ФЗ. Записи о дочерних организациях отсутствуют";
+                String registered223Info = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях отсутствуют";
+                String registered44Info = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях отсутствуют";
+                String registered44And223MotherInfo = "Материнская компания зарегистрирована: 223-ФЗ и 44-ФЗ";
+                String registered223MotherInfo = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях в аналогичном реестре";
+                String registered44MotherInfo = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях в аналогичном реестре";
+                String notRegisteredOrganizaciiInfo = "Не зарегистрирован в реестре организаций";
+
+                if (blocked223) {
+                    resultOrganizacii.add(blocked223Info);
+                }
+
+                if (blocked44) {
+                    resultOrganizacii.add(blocked44Info);
+                }
+
+                if (countOfReference == 1) {
+                    if (all) {
+                        resultOrganizacii.add(registered44And223Info);
+                    } else if (only223) {
+                        resultOrganizacii.add(registered223Info);
+                    } else if (only44) {
+                        resultOrganizacii.add(registered44Info);
+                    }
+                } else if (countOfReference > 0) {
+                    if (all) {
+                        resultOrganizacii.add(registered44And223MotherInfo);
+                    } else if (only223) {
+                        resultOrganizacii.add(registered223MotherInfo);
+                    } else if (only44) {
+                        resultOrganizacii.add(registered44MotherInfo);
+                    }
+                } else {
+                    resultOrganizacii.add(notRegisteredOrganizaciiInfo);
+                }
             }
         }
         return resultOrganizacii;
