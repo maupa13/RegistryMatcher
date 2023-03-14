@@ -16,10 +16,10 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Введите путь к файлу .xls (например - C:\\Users\\18432282\\Downloads\\TABLES\\inputshort.xls:");
+        System.out.println("Введите путь к excel-файлу .xlsx (или .xls) (C:\\INPUTSHORT.xlsx):");
         input = scanner.next();
 
-        System.out.println("Введите путь к выводимому файлу .xls (например - C:\\Users\\18432282\\Downloads\\TABLES\\Outputshort.xls:");
+        System.out.println("Введите путь к выводимому excel-файлу .xlsx (или .xls) (C:\\OUTPUT.xlsx):");
         output = scanner.next();
 
         matcherProcess();
@@ -29,11 +29,13 @@ public class Main {
 
         UserInputs userInputs = new UserInputs(input, output);
 
-        DownloadCem.downloadCemTable();
-
-        CemRegistration.matcherCemRegistration(userInputs.getInput());
-        VyruchkaRegistration.findMatches(userInputs.getInput());
+        CemMatcher.makeInputInCemReestr(input);
+//
+////        DownloadCem.downloadCemTable();
+//
+////        CemRegistration.matcherCemRegistration(userInputs.getInput());
         ZakazchikiRegistration.findMatchesZakazchiki(userInputs.getInput());
+        VyruchkaRegistration.findMatches(userInputs.getInput());
         ZakachikiTypeOfCompanyRegistration.findMatchesType(userInputs.getInput());
         OrganizaciiRegistration.findMatches(userInputs.getInput());
 

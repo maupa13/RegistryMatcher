@@ -22,7 +22,7 @@ public class OrganizaciiRegistration {
 
     public static ArrayList findMatches(String input) {
 
-        System.out.println("Started check - Organizacii 90%");
+        System.out.println("STARTED MATCHING - Organizacii");
 
         boolean success = false;
 
@@ -66,6 +66,8 @@ public class OrganizaciiRegistration {
             }
 
             if (success) {
+
+                System.out.println(element.getOgrn() + " " + 100 * element.getRowIndex() / companies.size() + "%");
 
                 assert organizacii != null;
 

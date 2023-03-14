@@ -21,7 +21,7 @@ public class VyruchkaRegistration {
 
     public static ArrayList findMatches(String input) {
 
-        System.out.println("Started check - Vyruchka 30%");
+        System.out.println("STARTED MATCHING - Vyruchka");
 
         SetIp setIp = new SetIp();
 
@@ -79,14 +79,17 @@ public class VyruchkaRegistration {
 
             if (success) {
 
+                System.out.println(element.getName() + " " + 100 * element.getRowIndex() / companies.size() + "%");
+
                 var statusStringBuildVyruchka = new StringBuilder();
                 assert vyruchka != null;
 
-                Matcher matcherClassesVyruchkaInfo = Pattern.compile("2022 год").matcher(vyruchka.toString());
+                Matcher matcherClassesVyruchkaInfoYear = Pattern.compile("2022 год").matcher(vyruchka.toString());
+                Matcher matcherClassesVyruchkaInfoName = Pattern.compile(element.getName()).matcher(vyruchka.toString());
 
                 int countOfReferenceVyruchka = 0;
-                while (matcherClassesVyruchkaInfo.find()) {
-                    statusStringBuildVyruchka.append(matcherClassesVyruchkaInfo.group());
+                while (matcherClassesVyruchkaInfoYear.find() && matcherClassesVyruchkaInfoName.find()) {
+                    statusStringBuildVyruchka.append(matcherClassesVyruchkaInfoYear.group());
                     countOfReferenceVyruchka++;
                 }
 
