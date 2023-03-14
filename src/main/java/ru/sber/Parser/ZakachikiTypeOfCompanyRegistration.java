@@ -22,7 +22,7 @@ public class ZakachikiTypeOfCompanyRegistration {
 
     public static ArrayList findMatchesType(String input) {
 
-        System.out.println("Started check - Zakazchiki: Type of company 75%");
+        System.out.println("STARTED MATCHING - ZakazchikiTypeOfCompany");
 
         boolean success = false;
 
@@ -67,6 +67,8 @@ public class ZakachikiTypeOfCompanyRegistration {
 
             if (success) {
 
+                System.out.println(element.getOgrn() + " " + 100 * element.getRowIndex() / companies.size() + "%");
+
                 assert zakazchiki != null;
 
                 Elements zakazchikiStatus = zakazchiki.getElementsByClass("d-flex lots-wrap-content__body__val");
@@ -95,9 +97,9 @@ public class ZakachikiTypeOfCompanyRegistration {
                 String notRegisteredType = "Отсутствуют сведения о типе ЮЛ";
                 String massRegisteredType = "Множество записей о типе ЮЛ: записи о дочерних организациях";
 
-                if (countOfReferenceZakazchiki == 1) {
+                if (countOfReferenceZakazchiki == 2) {
                     resultZakazchikiType.add(zakazchikiStatusWrite);
-                } else if (countOfReferenceZakazchiki > 1) {
+                } else if (countOfReferenceZakazchiki > 2) {
                     resultZakazchikiType.add(massRegisteredType);
                 } else {
                     resultZakazchikiType.add(notRegisteredType);

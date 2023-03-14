@@ -1,8 +1,10 @@
 package ru.sber.Importer;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 
@@ -23,9 +25,14 @@ public class DownloadCem {
 
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
-//        webClient.getOptions().setJavaScriptEnabled(false);
+        webClient.getOptions().setJavaScriptEnabled(true);
         webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getCookieManager().setCookiesEnabled(true);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getCookieManager().setCookiesEnabled(true);
 
         HtmlPage page = null;
 
@@ -43,6 +50,9 @@ public class DownloadCem {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        HtmlInput inputBox = (HtmlInput)page.getElementById("oGRN");
+        inputBox.setValueAttribute("text");
 
 //        while (!page.asText().contains("<th>Номер приказа о включении</th>")) {
 //            webClient.waitForBackgroundJavaScript(500);

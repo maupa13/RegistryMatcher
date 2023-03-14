@@ -23,7 +23,7 @@ public class ZakazchikiRegistration {
     //change type of find (cause of same in type)
     public static ArrayList findMatchesZakazchiki(String input) {
 
-        System.out.println("Started check - Zakazchiki: Registration 60%");
+        System.out.println("STARTED MATCHING - ZakazchikiRegistration");
 
         boolean success = false;
 
@@ -69,6 +69,8 @@ public class ZakazchikiRegistration {
 
             if (success) {
 
+                System.out.println(element.getOgrn() + " " + 100 * element.getRowIndex() / companies.size() + "%");
+
                 assert zakazchiki != null;
 
                 Elements zakazchikiStatus = zakazchiki.getElementsByClass("d-flex lots-wrap-content__body__val");
@@ -87,9 +89,9 @@ public class ZakazchikiRegistration {
                 String massRegisteredCompany = "Множество записей ЮЛ: записи о дочерних организациях";
                 String notRegisteredCompany = "Не зарегистрирован";
 
-                if (countOfReferenceZakazchiki == 1) {
+                if (countOfReferenceZakazchiki == 2) {
                     resultZakazchiki.add(registeredCompany);
-                } else if (countOfReferenceZakazchiki > 1) {
+                } else if (countOfReferenceZakazchiki > 2) {
                     resultZakazchiki.add(massRegisteredCompany);
                 } else {
                     resultZakazchiki.add(notRegisteredCompany);
