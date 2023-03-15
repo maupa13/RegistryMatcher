@@ -18,15 +18,23 @@ import static com.poiji.bind.Poiji.fromExcel;
 
 public class OrganizaciiRegistration {
 
+    static String blocked223Info = "Запись о блокировке: 223-ФЗ. Рекомендуется проверить организацию вручную";
+    static String blocked44Info = "Запись о блокировке: 44-ФЗ. Рекомендуется проверить организацию вручную";
+    static String registered44And223Info = "Зарегистрирован: 223-ФЗ и 44-ФЗ. Записи о дочерних организациях отсутствуют";
+    static String registered223Info = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях отсутствуют";
+    static String registered44Info = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях отсутствуют";
+    static String registered44And223MotherInfo = "Материнская компания зарегистрирована: 223-ФЗ и 44-ФЗ";
+    static String registered223MotherInfo = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях в аналогичном реестре";
+    static String registered44MotherInfo = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях в аналогичном реестре";
+    static String notRegisteredOrganizaciiInfo = "Не зарегистрирован в реестре организаций";
+
     public static ArrayList resultOrganizacii = new ArrayList();
 
     public static ArrayList findMatches(String input) {
 
-        System.out.println("STARTED MATCHING - Organizacii");
+        System.out.println("STARTED_ORGANIZACII");
 
         boolean success = false;
-
-        int i = 0;
 
         SetIp setIp = new SetIp();
 
@@ -46,6 +54,8 @@ public class OrganizaciiRegistration {
                     "NAME&pageNumber=1&sortDirection=false&recordsPerPage=_10&showLotsInfoHidden=false";
 
             Document organizacii = null;
+
+            int i = 0;
 
             while (i < 3) {
                 try {
@@ -88,16 +98,6 @@ public class OrganizaciiRegistration {
                 boolean only223 = !(organizaciiStatus.toString().contains("44-ФЗ")) && organizaciiStatus.toString().contains("223-ФЗ");
                 boolean blocked44 = organizaciiStatus.toString().contains("44-ФЗ Заблокирована");
                 boolean blocked223 = organizaciiStatus.toString().contains("223-ФЗ Заблокирована");
-
-                String blocked223Info = "Запись о блокировке: 223-ФЗ. Рекомендуется проверить организацию вручную";
-                String blocked44Info = "Запись о блокировке: 44-ФЗ. Рекомендуется проверить организацию вручную";
-                String registered44And223Info = "Зарегистрирован: 223-ФЗ и 44-ФЗ. Записи о дочерних организациях отсутствуют";
-                String registered223Info = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях отсутствуют";
-                String registered44Info = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях отсутствуют";
-                String registered44And223MotherInfo = "Материнская компания зарегистрирована: 223-ФЗ и 44-ФЗ";
-                String registered223MotherInfo = "Зарегистрирован: 223-ФЗ. Записи о дочерних организациях в аналогичном реестре";
-                String registered44MotherInfo = "Зарегистрирован: 44-ФЗ. Записи о дочерних организациях в аналогичном реестре";
-                String notRegisteredOrganizaciiInfo = "Не зарегистрирован в реестре организаций";
 
                 if (blocked223) {
                     resultOrganizacii.add(blocked223Info);

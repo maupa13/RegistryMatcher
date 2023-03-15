@@ -13,23 +13,23 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.poiji.bind.Poiji.*;
+import static com.poiji.bind.Poiji.fromExcel;
 
 public class VyruchkaRegistration {
+
+    static String emptyVyruchka = "Отсутствуют сведения о выручке за 2022 г.";
+    static String filledVyruchka = "Cведения о выручке за 2022 г. размещены";
+    static String problemVyruchka = "Отсутствуют сведения либо размещена квартальная выручка за 2022 г.";
 
     public static ArrayList resultVyruchka = new ArrayList();
 
     public static ArrayList findMatches(String input) {
 
-        System.out.println("STARTED MATCHING - Vyruchka");
+        System.out.println("STARTED_VYRUCHKA");
 
         SetIp setIp = new SetIp();
 
         boolean success = false;
-
-        String emptyVyruchka = "Отсутствуют сведения о выручке за 2022 г.";
-        String filledVyruchka = "Cведения о выручке за 2022 г. размещены";
-        String problemVyruchka = "Отсутствуют сведения либо размещена квартальная выручка за 2022 г.";
 
         Document vyruchka = null;
 

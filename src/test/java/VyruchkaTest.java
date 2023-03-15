@@ -1,13 +1,16 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class VyruchkaTest {
-    public static void main(String[] args) throws IOException {
+
+    @Test
+    public void vyruchkaMatcher() {
 
         String name = "АКЦИОНЕРНОЕ ОБЩЕСТВО \"123 АВИАЦИОННЫЙ РЕМОНТНЫЙ ЗАВОД\"";
 
@@ -26,12 +29,16 @@ public class VyruchkaTest {
                 "reportingPeriodYearEndHidden=0&reportingPeriodQuarterEndHidden=DEFAULT&sortBy=REESTR_NAME" +
                 "&pageNumber=1&sortDirection=true&recordsPerPage=_10&showLotsInfoHidden=false";
 
-        Document vyruchka = Jsoup.connect(urlVyruchka)
-                .timeout(100 * 1000)
-                .get();
+        Document vyruchka = null;
 
+        try {
+            vyruchka = Jsoup.connect(urlVyruchka)
+                    .timeout(0)
+                    .get();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        Elements vyruchkaStatus = vyruchka.getElementsByAttribute("data-block__value");
         StringBuilder statusStringBuildVyruchka = new StringBuilder();
 
         Matcher matcherClassesVyruchka = Pattern.compile("2022 год").matcher(vyruchka.toString());
@@ -42,15 +49,6 @@ public class VyruchkaTest {
             countOfReferenceVyruchka++;
         }
 
-        String vyruchkaStatusWrite = vyruchkaStatus.toString();
-
-        if (countOfReferenceVyruchka > 0) {
-            System.out.println(vyruchkaStatusWrite);
-        } else {
-            System.out.println("Отсутствует выручка");
-        }
-
-        System.out.println("Строка выручки: " + vyruchkaStatus + ". Иные сведения: " + countOfReferenceVyruchka);
-
+        Assert.assertEquals(1, countOfReferenceVyruchka);
     }
 }

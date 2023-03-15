@@ -4,7 +4,7 @@ import com.poiji.bind.Poiji;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFHyperlink;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import ru.sber.DTO.Company;
 
@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-//import static ru.sber.Parser.CemRegistration.resultCem;
-import static ru.sber.Parser.CemMatcher.*;
+import static ru.sber.Parser.CemMatcher.resultCem;
+import static ru.sber.Parser.CemMatcher.resultCemType;
 import static ru.sber.Parser.OrganizaciiRegistration.resultOrganizacii;
 import static ru.sber.Parser.VyruchkaRegistration.resultVyruchka;
 import static ru.sber.Parser.ZakachikiTypeOfCompanyRegistration.resultZakazchikiType;
@@ -27,16 +27,12 @@ public class WriteOutputExcelFile {
     XSSFWorkbook wb = new XSSFWorkbook();
 
     public WriteOutputExcelFile(String input, String output) {
-
         firstPage(input, output);
         secondPage(output);
         thirdPage(input, output);
     }
 
     public void firstPage(String input, String output){
-        int i = 1;
-        int m = 0;
-
         List<Company> companies = Poiji.fromExcel(new File(input), Company.class);
 
         Font font = wb.createFont();
@@ -48,7 +44,7 @@ public class WriteOutputExcelFile {
         style.setFillPattern(FillPatternType.THIN_BACKWARD_DIAG);
         style.setFont(font);
 
-        Sheet sheet = wb.createSheet("Реестры 223-ФЗ 44-ФЗ СЕМ");
+        Sheet sheet = wb.createSheet("Данные реестров");
         Row row = sheet.createRow(0);
 
         row.setHeight((short) 500);
@@ -80,6 +76,9 @@ public class WriteOutputExcelFile {
         cell = row.createCell(6);
         cell.setCellValue("Реестр СЕМ");
         cell.setCellStyle(style);
+
+        int i = 1;
+        int m = 0;
 
         for (Company element : companies) {
 
@@ -141,13 +140,14 @@ public class WriteOutputExcelFile {
     }
 
     public void secondPage(String output){
-
-
         Sheet sheet1 = wb.createSheet("Данные реестра СЕМ");
-        Row row1 = sheet1.createRow(0);
+        Row row1 = sheet1.createRow((short)0);
 
         CellStyle style = wb.createCellStyle();
         Font font = wb.createFont();
+
+        XSSFCellStyle style1 = wb.createCellStyle();
+        style1.setWrapText(true);
 
         style.setFillBackgroundColor(IndexedColors.BRIGHT_GREEN1.getIndex());
         style.setAlignment(HorizontalAlignment.CENTER);
@@ -160,13 +160,16 @@ public class WriteOutputExcelFile {
         cell1.setCellStyle(style);
 
         for (int y = 1; y < resultCemType.size() + 1; y++) {
-
             Row dataRow1 = sheet1.createRow(y);
             Cell dataCell1 = dataRow1.createCell(0);
-            dataCell1.setCellValue(String.valueOf(resultCemType.get(y - 1)));
+            dataCell1.setCellValue(String.valueOf(resultCemType.get(y - 1)).replaceAll("Реестр\tРаздел\tНомер" +
+                    "\tРегион\tОрганизация\tРеквизиты\tАдрес\tНомер приказа о включении\tДата приказа о включении", ""));
+            dataCell1.setCellStyle(style1);
         }
 
         sheet1.autoSizeColumn(0);
+
+        sheet1.setAutoFilter(new CellRangeAddress(0, 0, 0, 0));
 
         FileOutputStream fileOut = null;
 
@@ -187,8 +190,6 @@ public class WriteOutputExcelFile {
     }
 
     public void thirdPage(String input, String output) {
-        int p = 1;
-
         List<Company> companies = Poiji.fromExcel(new File(input), Company.class);
 
         Font font = wb.createFont();
@@ -200,10 +201,17 @@ public class WriteOutputExcelFile {
         style.setFillPattern(FillPatternType.THIN_BACKWARD_DIAG);
         style.setFont(font);
 
+        Font fontHyper = wb.createFont();
+        CellStyle styleHyper = wb.createCellStyle();
+
+        fontHyper.setColor(IndexedColors.BLUE.getIndex());
+        fontHyper.setUnderline(Font.U_SINGLE);
+        styleHyper.setAlignment(HorizontalAlignment.CENTER);
+        styleHyper.setVerticalAlignment(VerticalAlignment.CENTER);
+        styleHyper.setFont(fontHyper);
+
         Sheet sheet = wb.createSheet("Перечень ссылок");
         Row row = sheet.createRow(0);
-
-        Hyperlink link = (XSSFHyperlink)wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
 
         row.setHeight((short) 400);
 
@@ -216,19 +224,20 @@ public class WriteOutputExcelFile {
         cell.setCellStyle(style);
 
         cell = row.createCell(2);
-        cell.setCellValue("Ссылка - Реестр заказчиков");
+        cell.setCellValue("Реестр заказчиков");
         cell.setCellStyle(style);
 
         cell = row.createCell(3);
-        cell.setCellValue("Ссылка - Организаций");
+        cell.setCellValue("Реестр организаций");
         cell.setCellStyle(style);
 
         cell = row.createCell(4);
-        cell.setCellValue("Ссылка - Сведения о размещенной выручке");
+        cell.setCellValue("Реестр сведений о размещенной выручке");
         cell.setCellStyle(style);
 
-        for (Company element : companies) {
+        int p = 1;
 
+        for (Company element : companies) {
             String urlZakachicki = "https://zakupki.gov.ru/epz/customer223/search/results.html?searchString=" +
                     element.getOgrn() +
                     "&morphology=on&search-filter=%D0%94%D0%B0%D1%82%D0%B5+" +
@@ -259,6 +268,16 @@ public class WriteOutputExcelFile {
                     "=on&fz223=on&F=on&S=on&M=on&NOT_FSM=on&registered94=on&notRegistered=on&sortBy=" +
                     "NAME&pageNumber=1&sortDirection=false&recordsPerPage=_10&showLotsInfoHidden=false";
 
+
+            Hyperlink linkZak = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            linkZak.setAddress(urlZakachicki);
+
+            Hyperlink linkOrg = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            linkOrg.setAddress(urlOrganizacii);
+
+            Hyperlink linkVyr = wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            linkVyr.setAddress(urlVyruchka);
+
             //Set value to OGRN cell in excel file
             Row dataRow = sheet.createRow(p);
             Cell dataCell = dataRow.createCell(0);
@@ -269,28 +288,30 @@ public class WriteOutputExcelFile {
             dataCell.setCellValue(element.getName());
 
             dataCell = dataRow.createCell(2);
-            dataCell.setCellValue(urlZakachicki);
-            link.setAddress(urlZakachicki);
-            dataCell.setHyperlink(link);
+            dataCell.setCellValue(p);
+            dataCell.setHyperlink(linkZak);
+            dataCell.setCellStyle(styleHyper);
 
             dataCell = dataRow.createCell(3);
-            dataCell.setCellValue(urlOrganizacii);
-            link.setAddress(urlOrganizacii);
-            dataCell.setHyperlink(link);
+            dataCell.setCellValue(p);
+            dataCell.setHyperlink(linkOrg);
+            dataCell.setCellStyle(styleHyper);
 
             dataCell = dataRow.createCell(4);
-            dataCell.setCellValue(urlVyruchka);
-            link.setAddress(urlVyruchka);
-            dataCell.setHyperlink(link);
+            dataCell.setCellValue(p);
+            dataCell.setHyperlink(linkVyr);
+            dataCell.setCellStyle(styleHyper);
 
             p++;
         }
 
         sheet.autoSizeColumn(0);
         sheet.autoSizeColumn(1);
-//        sheet.autoSizeColumn(2);
-//        sheet.autoSizeColumn(3);
-//        sheet.autoSizeColumn(4);
+        sheet.autoSizeColumn(2);
+        sheet.autoSizeColumn(3);
+        sheet.autoSizeColumn(4);
+
+        sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, 4));
 
         FileOutputStream fileOut = null;
 

@@ -18,11 +18,14 @@ import static com.poiji.bind.Poiji.fromExcel;
 
 public class ZakachikiTypeOfCompanyRegistration {
 
+    static String notRegisteredType = "Отсутствуют сведения о типе ЮЛ";
+    static String massRegisteredType = "Множество записей о типе ЮЛ: записи о дочерних организациях";
+
     public static ArrayList resultZakazchikiType = new ArrayList();
 
     public static ArrayList findMatchesType(String input) {
 
-        System.out.println("STARTED MATCHING - ZakazchikiTypeOfCompany");
+        System.out.println("STARTED_ZAKAZCHIKI_TYPE_OF_COMPANY");
 
         boolean success = false;
 
@@ -93,9 +96,6 @@ public class ZakachikiTypeOfCompanyRegistration {
                                 " Заказчик\n" + "div\n" + "div class=d-flex lots-wrap-content__body__val", "")
                         .replace("class=d-flexlots-wrap-content__body__val", "")
                         .replace("div", "");
-
-                String notRegisteredType = "Отсутствуют сведения о типе ЮЛ";
-                String massRegisteredType = "Множество записей о типе ЮЛ: записи о дочерних организациях";
 
                 if (countOfReferenceZakazchiki == 2) {
                     resultZakazchikiType.add(zakazchikiStatusWrite);
