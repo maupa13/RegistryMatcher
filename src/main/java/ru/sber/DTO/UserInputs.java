@@ -18,7 +18,6 @@ public class UserInputs {
         return output;
     }
 
-
 //    public void setCounter(int counter) {
 //        this.counter = counter;
 //    }

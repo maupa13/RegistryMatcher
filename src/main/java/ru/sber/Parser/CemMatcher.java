@@ -18,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.poiji.bind.Poiji.fromExcel;
-import static java.util.Objects.nonNull;
 
 public class CemMatcher {
 
@@ -26,6 +25,8 @@ public class CemMatcher {
     public static ArrayList resultCemType = new ArrayList();
 
     public static ArrayList makeInputInCemReestr(String input) {
+
+        System.out.println("STARTED_CEM");
 
         SetIp setIp = new SetIp();
 
@@ -97,18 +98,30 @@ public class CemMatcher {
             }
             resultCem.add(countOfReference - 1);
         }
-        modifyMatchesInTable();
+        modifyMatchesInTable(resultCemType);
 
         return resultCem;
     }
 
-    public static ArrayList modifyMatchesInTable() {
-
-        String delete = "\"Реестр\\tРаздел\\tНомер\\tРегион\\tОрганизация\\tРеквизиты\\tАдрес\\tНомер приказа о включении\\tДата приказа о включении\"";
-
-        if (nonNull(resultCemType) && resultCemType.contains(delete)) {
-            resultCemType.remove(delete);
-        }
+    public static ArrayList modifyMatchesInTable(ArrayList resultCemType) {
+//
+//        String delete1 = "Дата приказа о включении";
+//        String delete2 = "Раздел";
+//        String delete3 = "Регион";
+//        String delete4 = "Организация";
+//        String delete5 = "Реквизиты";
+//        String delete6 = "Адрес";
+//        String delete7 = "Номер приказа о включении";
+//
+//        if (nonNull(resultCemType)) {
+//            resultCemType.remove(delete1);
+//            resultCemType.remove(delete2);
+//            resultCemType.remove(delete3);
+//            resultCemType.remove(delete4);
+//            resultCemType.remove(delete5);
+//            resultCemType.remove(delete6);
+//            resultCemType.remove(delete7);
+//        }
         return resultCemType;
     }
 }

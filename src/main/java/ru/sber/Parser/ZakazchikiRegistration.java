@@ -14,16 +14,20 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.poiji.bind.Poiji.*;
+import static com.poiji.bind.Poiji.fromExcel;
 
 public class ZakazchikiRegistration {
+
+    static String registeredCompany = "Зарегистрирован";
+    static String massRegisteredCompany = "Множество записей ЮЛ: записи о дочерних организациях";
+    static String notRegisteredCompany = "Не зарегистрирован";
 
     public static ArrayList resultZakazchiki = new ArrayList();
 
     //change type of find (cause of same in type)
     public static ArrayList findMatchesZakazchiki(String input) {
 
-        System.out.println("STARTED MATCHING - ZakazchikiRegistration");
+        System.out.println("STARTED_ZAKAZCHIKI_REGISTRATION");
 
         boolean success = false;
 
@@ -84,10 +88,6 @@ public class ZakazchikiRegistration {
                     statusStringBuildZakachiki.append("d-flex lots-wrap-content__body__val");
                     countOfReferenceZakazchiki++;
                 }
-
-                String registeredCompany = "Зарегистрирован";
-                String massRegisteredCompany = "Множество записей ЮЛ: записи о дочерних организациях";
-                String notRegisteredCompany = "Не зарегистрирован";
 
                 if (countOfReferenceZakazchiki == 2) {
                     resultZakazchiki.add(registeredCompany);

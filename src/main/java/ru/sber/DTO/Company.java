@@ -4,7 +4,6 @@ import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelRow;
 
 public class Company {
-
     @ExcelRow
     private int rowIndex;
     @ExcelCell(value = 0)
