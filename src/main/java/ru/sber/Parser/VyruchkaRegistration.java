@@ -1,9 +1,11 @@
-package ru.sber.Parser;
+package ru.sber.parser;
+
+import static com.poiji.bind.Poiji.fromExcel;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import ru.sber.Connection.SetIp;
-import ru.sber.DTO.Company;
+import ru.sber.connection.SetIp;
+import ru.sber.dto.Company;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,16 +15,24 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.poiji.bind.Poiji.fromExcel;
-
+/**
+ * Check company in zakupki.gov.ru registry by vyruchka.
+ */
 public class VyruchkaRegistration {
 
     static String emptyVyruchka = "Отсутствуют сведения о выручке за 2022 г.";
     static String filledVyruchka = "Cведения о выручке за 2022 г. размещены";
-    static String problemVyruchka = "Отсутствуют сведения либо размещена квартальная выручка за 2022 г.";
+    static String problemVyruchka = "Отсутствуют сведения либо "
+            + "размещена квартальная выручка за 2022 г.";
 
     public static ArrayList resultVyruchka = new ArrayList();
 
+    /**
+     * Find company according to vyruchka.
+     *
+     * @param input path to Excel file.
+     * @return Array list with registration results.
+     */
     public static ArrayList findMatches(String input) {
 
         System.out.println("STARTED_VYRUCHKA");
@@ -33,7 +43,8 @@ public class VyruchkaRegistration {
 
         Document vyruchka = null;
 
-        String userAgent = "Mozilla/5.0 (X11; U; Linux i586; en-US; rv:1.7.3) Gecko/20040924 Epiphany/1.4.4 (Ubuntu)";
+        String userAgent = "Mozilla/5.0 (X11; U; Linux i586; en-US; rv:1.7.3)"
+                + " Gecko/20040924 Epiphany/1.4.4 (Ubuntu)";
 
         List<Company> companies = fromExcel(new File(input), Company.class);
 
@@ -52,12 +63,12 @@ public class VyruchkaRegistration {
                     .replace(",", "")
                     .replace("<", "");
 
-            String urlVyruchka = "https://zakupki.gov.ru/epz/revenue/search/results.html?searchString=" +
-                    nameChanded +
-                    "%22&morphology=on&search-filter=Дате+размещения&irrelevantInformation=on&sec_1=on&sec_2=" +
-                    "on&sec_3=on&reportingPeriodYearStartHidden=0&reportingPeriodQuarterStartHidden=DEFAULT&" +
-                    "reportingPeriodYearEndHidden=0&reportingPeriodQuarterEndHidden=DEFAULT&sortBy=REESTR_NAME" +
-                    "&pageNumber=1&sortDirection=true&recordsPerPage=_10&showLotsInfoHidden=false";
+            String urlVyruchka = "https://zakupki.gov.ru/epz/revenue/search/results.html?searchString="
+                    + nameChanded
+                    + "%22&morphology=on&search-filter=Дате+размещения&irrelevantInformation=on&sec_1=on&sec_2="
+                    + "on&sec_3=on&reportingPeriodYearStartHidden=0&reportingPeriodQuarterStartHidden=DEFAULT&"
+                    + "reportingPeriodYearEndHidden=0&reportingPeriodQuarterEndHidden=DEFAULT&sortBy=REESTR_NAME"
+                    + "&pageNumber=1&sortDirection=true&recordsPerPage=_10&showLotsInfoHidden=false";
 
             while (i < 3) {
                 try {
@@ -84,8 +95,10 @@ public class VyruchkaRegistration {
                 var statusStringBuildVyruchka = new StringBuilder();
                 assert vyruchka != null;
 
-                Matcher matcherClassesVyruchkaInfoYear = Pattern.compile("2022 год").matcher(vyruchka.toString());
-                Matcher matcherClassesVyruchkaInfoName = Pattern.compile(element.getName()).matcher(vyruchka.toString());
+                Matcher matcherClassesVyruchkaInfoYear = Pattern.compile("2022 год")
+                        .matcher(vyruchka.toString());
+                Matcher matcherClassesVyruchkaInfoName = Pattern.compile(element.getName())
+                        .matcher(vyruchka.toString());
 
                 int countOfReferenceVyruchka = 0;
                 while (matcherClassesVyruchkaInfoYear.find() && matcherClassesVyruchkaInfoName.find()) {

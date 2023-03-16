@@ -1,5 +1,8 @@
-package ru.sber.DTO;
+package ru.sber.dto;
 
+/**
+ * DTO Inputs from users.
+ */
 public class UserInputs {
     public String input;
     public String output;
@@ -18,11 +21,4 @@ public class UserInputs {
         return output;
     }
 
-//    public void setCounter(int counter) {
-//        this.counter = counter;
-//    }
-//
-//    public int getCounter(int counter) {
-//        return counter;
-//    }
 }

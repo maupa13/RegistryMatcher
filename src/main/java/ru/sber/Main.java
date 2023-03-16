@@ -1,20 +1,33 @@
 package ru.sber;
 
-import ru.sber.DTO.UserInputs;
-import ru.sber.Exporter.WriteOutputExcelFile;
-import ru.sber.Parser.*;
+import ru.sber.dto.UserInputs;
+import ru.sber.exporter.WriteOutputExcelFile;
+import ru.sber.parser.CemMatcher;
+import ru.sber.parser.OrganizaciiRegistration;
+import ru.sber.parser.VyruchkaRegistration;
+import ru.sber.parser.ZakachikiTypeOfCompanyRegistration;
+import ru.sber.parser.ZakazchikiRegistration;
 
 import java.util.Scanner;
 
+/**
+ * Main class to start and make inputs for users.
+ */
 public class Main {
 
     static String input;
     static String output;
 
+    /**
+     * Make inputs and load all classes.
+     *
+     * @param args the command line arguments.
+     */
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
 
+        //C:\Users\18432282\Downloads\TABLES\INPUTSHORT.xls
         System.out.println("Введите путь к excel-файлу .xlsx (или .xls) (C:\\INPUT.xlsx):");
         input = scanner.next();
 
@@ -24,15 +37,14 @@ public class Main {
         matcherProcess();
     }
 
+    /**
+     * Load reader, matchers and writer.
+     */
     public static void matcherProcess() {
 
         UserInputs userInputs = new UserInputs(input, output);
 
         CemMatcher.makeInputInCemReestr(input);
-
-//        DownloadCem.downloadCemTable();
-
-//        CemRegistration.matcherCemRegistration(userInputs.getInput());
         ZakazchikiRegistration.findMatchesZakazchiki(userInputs.getInput());
         VyruchkaRegistration.findMatches(userInputs.getInput());
         ZakachikiTypeOfCompanyRegistration.findMatchesType(userInputs.getInput());
