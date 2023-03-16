@@ -1,5 +1,8 @@
-package ru.sber.Connection;
+package ru.sber.connection;
 
+/**
+ * Set ip, host.
+ */
 public class SetIp {
 
     static String setHost = "http.proxyHost";
@@ -15,6 +18,12 @@ public class SetIp {
     static String setPort3 = "8182";
     static String setPort4 = "8183";
 
+    /**
+     * Set variable ip, host to bypass blocks from registries.
+     *
+     * @param changeIp Set settings according to cell index.
+     * @return Cell index.
+     */
     public int setVariantIp(int changeIp) {
         changeIp = 0;
 
