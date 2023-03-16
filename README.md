@@ -16,12 +16,12 @@ Check companies in public registry - https://zakupki.gov.ru/ and http://fas.gov.
 
 **Запуск** 
 
-1. Напрямую из среды разработки с настройкой проекта Maven и вводом excel файла (.xls) с данными - ОГРН, 
+1. Напрямую из среды разработки с настройкой проекта Maven и вводом excel файла (.xls или .xlsx) с данными - ОГРН, 
 полное (или сокращенное) наименование организации (1 столбец и 2 столбец).
 
-2. Запуск jar файла, так как формируется fat jar, с указанием файла excel (.xls) - с данными - ОГРН,
+2. Запуск jar файла после сборки Maven, так как формируется fat jar, с указанием файла excel (.xls или .xlsx) - с данными - ОГРН,
 полное (или сокращенное) наименование организации (1 столбец и 2 столбец).
 
 **Пример .xsl файла**
 
-https://github.com/maupa13/ZakupkiOrganizaciiCemMatcher/blob/main/EXCEL-EXAMPLE.PNG
+![Excel](https://github.com/maupa13/ZakupkiOrganizaciiCemMatcher/blob/main/EXCEL-EXAMPLE.PNG)
