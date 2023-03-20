@@ -5,40 +5,27 @@ package ru.sber.connection;
  */
 public class SetIp {
 
-    static String setHost = "http.proxyHost";
-    static String setPort = "http.proxyPort";
-
-    static String setIp1 = "192.168.5.1";
-    static String setIp2 = "192.168.5.2";
-    static String setIp3 = "192.168.5.3";
-    static String setIp4 = "192.168.5.4";
-
-    static String setPort1 = "8180";
-    static String setPort2 = "8181";
-    static String setPort3 = "8182";
-    static String setPort4 = "8183";
-
     /**
-     * Set variable ip, host to bypass blocks from registries.
+     * Set ip, host to bypass blocks from registries.
      *
      * @param changeIp Set settings according to cell index.
      * @return Cell index.
      */
-    public int setVariantIp(int changeIp) {
+    public int setOptionIp(int changeIp) {
         changeIp = 0;
 
         if ((changeIp & 2) == 0) {
-            System.setProperty(setHost, setIp1);
-            System.setProperty(setPort, setPort1);
+            System.setProperty(String.valueOf(HostIp.setHost), String.valueOf(HostIp.setIp1));
+            System.setProperty(String.valueOf(HostIp.setPort), String.valueOf(HostIp.setPort1));
         } else if ((changeIp & 3) == 0) {
-            System.setProperty(setHost, setIp2);
-            System.setProperty(setPort, setPort2);
+            System.setProperty(String.valueOf(HostIp.setHost), String.valueOf(HostIp.setIp2));
+            System.setProperty(String.valueOf(HostIp.setPort), String.valueOf(HostIp.setPort2));
         } else if ((changeIp & 5) == 0) {
-            System.setProperty(setHost, setIp3);
-            System.setProperty(setPort, setPort3);
+            System.setProperty(String.valueOf(HostIp.setHost), String.valueOf(HostIp.setIp3));
+            System.setProperty(String.valueOf(HostIp.setPort), String.valueOf(HostIp.setPort3));
         } else if ((changeIp & 7) == 0) {
-            System.setProperty(setHost, setIp4);
-            System.setProperty(setPort, setPort4);
+            System.setProperty(String.valueOf(HostIp.setHost), String.valueOf(HostIp.setIp4));
+            System.setProperty(String.valueOf(HostIp.setPort), String.valueOf(HostIp.setPort4));
         }
         return changeIp;
     }

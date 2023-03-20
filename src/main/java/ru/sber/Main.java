@@ -1,12 +1,14 @@
 package ru.sber;
 
+import ru.sber.converter.CompanyList;
+import ru.sber.converter.RegistryUrl;
 import ru.sber.dto.UserInputs;
-import ru.sber.exporter.WriteOutputExcelFile;
-import ru.sber.parser.CemMatcher;
-import ru.sber.parser.OrganizaciiRegistration;
-import ru.sber.parser.VyruchkaRegistration;
-import ru.sber.parser.ZakachikiTypeOfCompanyRegistration;
-import ru.sber.parser.ZakazchikiRegistration;
+import ru.sber.exporter.WriteExcel;
+import ru.sber.parser.CustomerRegistration;
+import ru.sber.parser.CustomerTypeOfCompany;
+import ru.sber.parser.OrganizationRegistration;
+import ru.sber.parser.RevenueRegistration;
+import ru.sber.parser.SnmMatcher;
 
 import java.util.Scanner;
 
@@ -15,11 +17,11 @@ import java.util.Scanner;
  */
 public class Main {
 
-    static String input;
-    static String output;
+    private static String input;
+    private static String output;
 
     /**
-     * Make inputs and load all classes.
+     * Make input, load, write output.
      *
      * @param args the command line arguments.
      */
@@ -27,7 +29,6 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
-        //C:\Users\18432282\Downloads\TABLES\INPUTSHORT.xls
         System.out.println("Введите путь к excel-файлу .xlsx (или .xls) (C:\\INPUT.xlsx):");
         input = scanner.next();
 
@@ -40,16 +41,23 @@ public class Main {
     /**
      * Load reader, matchers and writer.
      */
-    public static void matcherProcess() {
+    static void matcherProcess() {
 
         UserInputs userInputs = new UserInputs(input, output);
 
-        CemMatcher.makeInputInCemReestr(input);
-        ZakazchikiRegistration.findMatchesZakazchiki(userInputs.getInput());
-        VyruchkaRegistration.findMatches(userInputs.getInput());
-        ZakachikiTypeOfCompanyRegistration.findMatchesType(userInputs.getInput());
-        OrganizaciiRegistration.findMatches(userInputs.getInput());
+        CompanyList.companyNameList(userInputs.getInput());
+        CompanyList.companyPsrnList(userInputs.getInput());
 
-        new WriteOutputExcelFile(input, output);
+        RegistryUrl.companyCustomerUrlList();
+        RegistryUrl.companyOrganizationUrlList();
+        RegistryUrl.companyRevenueUrlList();
+
+        SnmMatcher.makeInputInSnmRegistry(userInputs.getInput());
+        CustomerRegistration.findMatches();
+        RevenueRegistration.findMatches(userInputs.getInput());
+        CustomerTypeOfCompany.findMatches(userInputs.getInput());
+        OrganizationRegistration.findMatches(userInputs.getInput());
+
+        new WriteExcel(userInputs.getInput(), userInputs.getOutput());
     }
 }

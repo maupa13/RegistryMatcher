@@ -20,22 +20,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Check company in fas.gov.ru (CEM) registry.
+ * Check company in fas.gov.ru snm registry.
  */
-public class CemMatcher {
+public class SnmMatcher {
 
-    public static ArrayList resultCem = new ArrayList();
-    public static ArrayList resultCemType = new ArrayList();
+    public static ArrayList resultSnm = new ArrayList();
+    public static ArrayList resultSnmType = new ArrayList();
 
     /**
-     * Make input of cell in fas.gov.ru (CEM) and find matches, info.
+     * Make input of cell in fas.gov.ru snm and find matches, info.
      *
      * @param input path to Excel file.
      * @return Array list with registration results.
      */
-    public static ArrayList makeInputInCemReestr(String input) {
+    public static ArrayList makeInputInSnmRegistry(String input) {
 
-        System.out.println("STARTED_CEM");
+        System.out.println("\nSTARTED_SNM");
 
         SetIp setIp = new SetIp();
 
@@ -44,7 +44,7 @@ public class CemMatcher {
         java.util.logging.Logger.getLogger("org.apache.http")
                 .setLevel(java.util.logging.Level.OFF);
 
-        String urlCem = "http://apps.eias.fas.gov.ru/findcem/";
+        String urlSnm = "http://apps.eias.fas.gov.ru/findcem/";
 
         WebClient webClient = new WebClient(BrowserVersion.CHROME);
 
@@ -57,17 +57,17 @@ public class CemMatcher {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getCookieManager().setCookiesEnabled(true);
 
-        HtmlPage page = null;
+        HtmlPage revenue = null;
 
         try {
-            page = webClient.getPage(urlCem);
+            revenue = webClient.getPage(urlSnm);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        assert page != null;
+        assert revenue != null;
 
-        HtmlInput inputBox = (HtmlInput) page.getElementById("oGRN");
+        HtmlInput inputBox = (HtmlInput) revenue.getElementById("oGRN");
 
         List<Company> companies = fromExcel(new File(input), Company.class);
 
@@ -75,12 +75,12 @@ public class CemMatcher {
 
         for (Company element : companies) {
 
-            setIp.setVariantIp(element.getRowIndex());
+            setIp.setOptionIp(element.getRowIndex());
 
-            inputBox.setValueAttribute(element.getOgrn());
+            inputBox.setValueAttribute(element.getPsrn());
 
             try {
-                HtmlButton htmlButtonSearch = page
+                HtmlButton htmlButtonSearch = revenue
                         .getFirstByXPath("/html/body/div/div[2]/div[2]/button");
                 htmlButtonSearch.click();
             } catch (IOException e) {
@@ -91,37 +91,37 @@ public class CemMatcher {
 
             int countOfReference = 0;
 
-            System.out.println(element.getOgrn() + " " + 100
+            System.out.println("SNM: " + element.getPsrn() + " " + 100
                     * element.getRowIndex() / companies.size() + "%");
 
-            Matcher matcherClasses = Pattern.compile(element.getOgrn())
-                    .matcher(page.asXml());
+            Matcher matcherClassesSnm = Pattern.compile(element.getPsrn())
+                    .matcher(revenue.asXml());
 
-            HtmlTable table = page.getFirstByXPath("//*[@id=\"report-table\"]");
+            HtmlTable table = revenue.getFirstByXPath("//*[@id=\"report-table\"]");
 
-            while (matcherClasses.find()) {
+            while (matcherClassesSnm.find()) {
 
-                stringCem.append(matcherClasses.group());
+                stringCem.append(matcherClassesSnm.group());
                 countOfReference++;
 
                 if (countOfReference > 1) {
-                    resultCemType.add(table.asNormalizedText());
+                    resultSnmType.add(table.asNormalizedText());
                 }
             }
-            resultCem.add(countOfReference - 1);
+            resultSnm.add(countOfReference - 1);
         }
-        modifyMatchesInTable(resultCemType);
+        modifyMatchesInTable(resultSnmType);
 
-        return resultCem;
+        return resultSnm;
     }
 
     /**
      * Edit results with info from registry.
      *
-     * @param resultCemType original list with info.
+     * @param resultSnmType original list with info.
      * @return edited array list with info.
      */
-    public static ArrayList modifyMatchesInTable(ArrayList resultCemType) {
-        return resultCemType;
+    public static ArrayList modifyMatchesInTable(ArrayList resultSnmType) {
+        return resultSnmType;
     }
 }

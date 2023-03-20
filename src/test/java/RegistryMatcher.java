@@ -1,5 +1,3 @@
-package ru.sber.old;
-
 import static java.util.Objects.nonNull;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -28,7 +26,7 @@ import java.util.regex.Pattern;
 /**
  * God class - find matches CEM, Zakupki from Excel and writes new Excel.
  */
-public class ReestrMatcher {
+public class RegistryMatcher {
 
     /**
      * God class.

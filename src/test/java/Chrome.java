@@ -1,26 +1,33 @@
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.Page;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import org.junit.Test;
+import ru.sber.connection.SetIp;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Collections;
 
-public class DownloadCem {
+/**
+ * Webclient.
+ */
+public class Chrome {
 
-    @Test
-    public void downloadCemTable() {
+    /**
+     * Chrome connection to registry.
+     *
+     * @param url connect registry.
+     * @return page results.
+     */
+    public Page webClientChrome(String url) {
 
-        String outputPath = "C:\\Temp\\cemTemp.xml";
+        SetIp setIp = new SetIp();
 
-        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(java.util.logging.Level.OFF);
-        java.util.logging.Logger.getLogger("org.apache.http").setLevel(java.util.logging.Level.OFF);
+        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit")
+                .setLevel(java.util.logging.Level.OFF);
+        java.util.logging.Logger.getLogger("org.apache.http")
+                .setLevel(java.util.logging.Level.OFF);
 
         String urlCem = "http://apps.eias.fas.gov.ru/findcem/";
 
@@ -35,6 +42,8 @@ public class DownloadCem {
         webClient.getOptions().setThrowExceptionOnScriptError(false);
         webClient.getCookieManager().setCookiesEnabled(true);
 
+        webClient.waitForBackgroundJavaScript(10000);
+
         HtmlPage page = null;
 
         try {
@@ -45,24 +54,18 @@ public class DownloadCem {
 
         assert page != null;
 
+        HtmlInput inputBox = (HtmlInput) page.getElementById("oGRN");
+
         try {
-            HtmlButton htmlButtonSearch = page.getFirstByXPath("/html/body/div/div[2]/div[2]/button");
+            HtmlButton htmlButtonSearch = page
+                    .getFirstByXPath("/html/body/div/div[2]/div[2]/button");
             htmlButtonSearch.click();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        HtmlInput inputBox = (HtmlInput)page.getElementById("oGRN");
-        inputBox.setValueAttribute("text");
-
         webClient.waitForBackgroundJavaScript(10000);
 
-        HtmlTable table = page.getFirstByXPath("//*[@id=\"report-table\"]");
-
-        try {
-            Files.write(Paths.get(outputPath), Collections.singleton(String.valueOf(table.asXml())));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        return page;
     }
 }
