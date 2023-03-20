@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VyruchkaTest {
+public class RevenueTest {
 
     @Test
     public void vyruchkaMatcher() {

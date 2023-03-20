@@ -4,13 +4,13 @@ import com.poiji.annotation.ExcelCell;
 import com.poiji.annotation.ExcelRow;
 
 /**
- * DTO Company.
+ * Company from Excel.
  */
 public class Company {
     @ExcelRow
     private int rowIndex;
     @ExcelCell(value = 0)
-    private String ogrn;
+    private String psrn;
     @ExcelCell(value = 1)
     private String name;
 
@@ -18,8 +18,8 @@ public class Company {
         return rowIndex;
     }
 
-    public String getOgrn() {
-        return ogrn;
+    public String getPsrn() {
+        return psrn;
     }
 
     public String getName() {
@@ -29,9 +29,9 @@ public class Company {
     @Override
     public String toString() {
         return "Company {"
-                + ", rowIndex=" + rowIndex + "'"
-                + " ogrn=" + ogrn
-                + ", name=" + name + "'"
+                + ", rowIndex =" + rowIndex + "'"
+                + " psrn =" + psrn
+                + ", name =" + name + "'"
                 + '}';
     }
 }

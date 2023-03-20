@@ -1,23 +1,22 @@
 package ru.sber.dto;
 
 /**
- * DTO Inputs from users.
+ * Data from user.
  */
 public class UserInputs {
-    public String input;
-    public String output;
-    int counter;
+    private static String input;
+    private static String output;
 
     public UserInputs(String input, String output) {
         this.input = input;
         this.output = output;
     }
 
-    public String getInput() {
+    public static String getInput() {
         return input;
     }
 
-    public String getOutput() {
+    public static String getOutput() {
         return output;
     }
 

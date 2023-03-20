@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class HyperLink {
+public class ExcelHyperlinkTest {
 
     @Test
     public void hyperLinkWithWritingExcelFile() {
